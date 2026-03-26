@@ -1,0 +1,20 @@
+version: "1"
+
+type: container
+
+ops:
+  - op: container/run
+    id: cryptosentinel-agent
+    args:
+      image: your-dockerhub-username/cryptosentinel:latest
+      gpu: true
+      expose: 3000
+      env:
+        NOSANA_MODEL_ENDPOINT: $NOSANA_MODEL_ENDPOINT
+        ETHERSCAN_API_KEY: $ETHERSCAN_API_KEY
+        PORT: "3000"
+        NODE_ENV: production
+        ELIZAOS_LOG_LEVEL: info
+        OPENAI_API_KEY: "nosana-key"
+      resources:
+        gpu_memory: 24
