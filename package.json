@@ -1,20 +1,28 @@
 {
-  "name": "nosana-eliza-agent",
-  "version": "0.1.0",
-  "private": true,
+  "name": "cryptosentinel-agent",
+  "version": "1.0.0",
+  "description": "Personal DeFi Monitor Agent built with ElizaOS for the Nosana x ElizaOS Agent Challenge",
+  "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "start": "elizaos start --character ./characters/agent.character.json",
-    "dev": "elizaos dev --character ./characters/agent.character.json"
+    "start": "elizaos start --character characters/cryptosentinel.json",
+    "dev": "elizaos dev --character characters/cryptosentinel.json",
+    "build": "elizaos build",
+    "frontend": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build"
   },
   "dependencies": {
-    "@elizaos/core": "^1.0.0",
-    "@elizaos/plugin-anthropic": "^1.5.12",
-    "@elizaos/plugin-bootstrap": "^1.0.0",
-    "@elizaos/plugin-openai": "^1.0.0"
+    "@elizaos/cli": "^2.0.0",
+    "@elizaos/core": "^2.0.0",
+    "@elizaos/plugin-bootstrap": "^2.0.0",
+    "node-fetch": "^3.3.2",
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
-    "@elizaos/cli": "^1.0.0",
-    "typescript": "^5.0.0"
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=23.0.0"
   }
 }
