@@ -1,37 +1,35 @@
-# syntax=docker/dockerfile:1
+# Stage 1: Build Frontend
+FROM node:23-alpine AS frontend-builder
 
-FROM node:23-slim AS base
+WORKDIR /app/frontend
+COPY frontend/package.json ./
+RUN npm install
+COPY frontend/ ./
+RUN npm run build
 
-# Install system dependencies needed for native modules (e.g. better-sqlite3)
-RUN apt-get update && apt-get install -y \
-  python3 \
-  make \
-  g++ \
-  git \
-  && rm -rf /var/lib/apt/lists/*
+# Stage 2: Agent Runtime
+FROM node:23-alpine AS runner
 
-# Disable telemetry
-ENV ELIZAOS_TELEMETRY_DISABLED=true
-ENV DO_NOT_TRACK=1
+RUN npm install -g bun
 
 WORKDIR /app
 
-# Install pnpm
-RUN npm install -g pnpm
-
-# Copy package manifest and install dependencies
 COPY package.json ./
-RUN pnpm install
+COPY src/ ./src/
+COPY characters/ ./characters/
 
-# Copy all source files
-COPY . .
+RUN npm install
+RUN npm install -g @elizaos/cli
 
-# Create data directory for SQLite
-RUN mkdir -p /app/data
+COPY --from=frontend-builder /app/public ./public
+
+ENV PORT=3000
+ENV NODE_ENV=production
+ENV ELIZAOS_LOG_LEVEL=info
 
 EXPOSE 3000
 
-ENV NODE_ENV=production
-ENV SERVER_PORT=3000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:3000/health || exit 1
 
-CMD ["pnpm", "start"]
+CMD ["elizaos", "start", "--character", "characters/cryptosentinel.json"]
